@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "204849947205",
+    "project_id": "storied-deck-376821",
+    "storage_bucket": "storied-deck-376821.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:204849947205:android:a460966490d5192b03f92c",
+        "android_client_info": {
+          "package_name": "dev.glebkoshcheev.myapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "204849947205-e7lo8corcpqasr2u2vluge4ga83k2raq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvXPu_fZ5LixkBU-4ZeuemCki6YukRTH4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "204849947205-e7lo8corcpqasr2u2vluge4ga83k2raq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "204849947205-m91k0ahqd16gq18u4f5n975uomiehgaa.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "dev.glebkoshcheev.myapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
