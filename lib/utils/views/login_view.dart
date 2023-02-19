@@ -59,9 +59,13 @@ class _LoginViewState extends State<LoginView> {
                     password: password,
                   );
                 } on FirebaseAuthException catch (e) {
-                  print(e.code);
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(e.code.toString()),
+                    backgroundColor: Colors.red.shade400,
+                  ));
                 } catch (e) {
-                  print(e);
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text(e.toString())));
                 }
               },
               child: const Text("Login"),
