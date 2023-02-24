@@ -12,7 +12,21 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Email Verification")),
+      appBar: AppBar(
+        title: const Text("Email Verification"),
+        actions: [
+          IconButton(
+              onPressed: (() async {
+                await FirebaseAuth.instance.signOut();
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/login/',
+                  (_) => false,
+                );
+              }),
+              tooltip: "Logout",
+              icon: const Icon(Icons.logout))
+        ],
+      ),
       body: Center(
         child: Column(
           children: [
