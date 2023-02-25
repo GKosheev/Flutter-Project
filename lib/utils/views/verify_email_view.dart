@@ -57,6 +57,10 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                     final user = FirebaseAuth.instance.currentUser;
                     await user?.sendEmailVerification();
                     await FirebaseAuth.instance.signOut();
+
+                    if (!mounted) {
+                      return;
+                    }
                     showSuccessSnackbar(context,
                         "Email has been sent. Please check your email and login again.");
                     Navigator.of(context).pushNamedAndRemoveUntil(

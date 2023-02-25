@@ -58,7 +58,7 @@ class _LoginViewState extends State<LoginView> {
                   password: password,
                 );
 
-                if (userCredentials.user?.emailVerified == true) {
+                if (userCredentials.user?.emailVerified == true && mounted) {
                   Navigator.of(context).pushNamedAndRemoveUntil(
                     notesRoute,
                     (_) => false,

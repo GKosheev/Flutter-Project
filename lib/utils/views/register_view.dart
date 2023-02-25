@@ -62,6 +62,11 @@ class _RegisterViewState extends State<RegisterView> {
 
                 await userCredentials.user?.sendEmailVerification();
                 await FirebaseAuth.instance.signOut();
+
+                if (!mounted) {
+                  return;
+                }
+
                 showSuccessSnackbar(
                     context, "Please check your email to verify your account");
                 Navigator.of(context).pushNamed(loginRoute);
