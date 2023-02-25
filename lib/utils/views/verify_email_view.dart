@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/constants/routes.dart';
+import '../show_error_snackbar.dart';
 
 class VerifyEmailView extends StatefulWidget {
   const VerifyEmailView({super.key});
@@ -18,11 +19,17 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
         actions: [
           IconButton(
               onPressed: (() async {
-                await FirebaseAuth.instance.signOut();
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  loginRoute,
-                  (_) => false,
-                );
+                try {
+                  await FirebaseAuth.instance.signOut();
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    loginRoute,
+                    (_) => false,
+                  );
+                } on FirebaseAuthException catch (e) {
+                  showErrorSnackbar(context, e.code.toString());
+                } catch (e) {
+                  showErrorSnackbar(context, "Unexpected Error 😈");
+                }
               }),
               tooltip: "Logout",
               icon: const Icon(Icons.logout))
@@ -34,8 +41,14 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
             const Text("Please verify your email address"),
             TextButton(
                 onPressed: () async {
-                  final user = FirebaseAuth.instance.currentUser;
-                  await user?.sendEmailVerification();
+                  try {
+                    final user = FirebaseAuth.instance.currentUser;
+                    await user?.sendEmailVerification();
+                  } on FirebaseAuthException catch (e) {
+                    showErrorSnackbar(context, e.code.toString());
+                  } catch (e) {
+                    showErrorSnackbar(context, "Unexpected Error 😈");
+                  }
                 },
                 child: const Text("Verify"))
           ],

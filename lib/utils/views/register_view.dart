@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/constants/routes.dart';
+import '../show_error_snackbar.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -63,12 +64,23 @@ class _RegisterViewState extends State<RegisterView> {
                 );
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'weak-password') {
-                  print('The password provided is too weak.');
+                  showErrorSnackbar(
+                    context,
+                    "weak password, make it stronger 🤖",
+                  );
                 } else if (e.code == 'email-already-in-use') {
-                  print('The account already exists for that email.');
+                  showErrorSnackbar(
+                    context,
+                    "email already in use 🧐",
+                  );
+                } else {
+                  showErrorSnackbar(
+                    context,
+                    e.code.toString(),
+                  );
                 }
               } catch (e) {
-                print(e);
+                showErrorSnackbar(context, "Unexpected Error 😈");
               }
             },
             child: const Text("Register"),

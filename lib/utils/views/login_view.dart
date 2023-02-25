@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/constants/routes.dart';
+import 'package:myapp/utils/show_error_snackbar.dart';
 import 'package:myapp/utils/views/register_view.dart';
 
 class LoginView extends StatefulWidget {
@@ -61,13 +62,9 @@ class _LoginViewState extends State<LoginView> {
                   (_) => false,
                 );
               } on FirebaseAuthException catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(e.code.toString()),
-                  backgroundColor: Colors.red.shade400,
-                ));
+                showErrorSnackbar(context, e.code.toString());
               } catch (e) {
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text(e.toString())));
+                showErrorSnackbar(context, "Unexpected Error 😈");
               }
             },
             child: const Text("Login"),
