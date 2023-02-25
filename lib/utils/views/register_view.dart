@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/constants/routes.dart';
 import '../show_error_snackbar.dart';
+import '../show_success_snackbar.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -53,15 +54,17 @@ class _RegisterViewState extends State<RegisterView> {
               final email = _email.text;
               final password = _password.text;
               try {
-                await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                final userCredentials =
+                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
                   email: email,
                   password: password,
                 );
 
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  notesRoute,
-                  (_) => false,
-                );
+                await userCredentials.user?.sendEmailVerification();
+                await FirebaseAuth.instance.signOut();
+                showSuccessSnackbar(
+                    context, "Please check your email to verify your account");
+                Navigator.of(context).pushNamed(loginRoute);
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'weak-password') {
                   showErrorSnackbar(
