@@ -1,6 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/constants/routes.dart';
+import 'package:myapp/services/auth/auth_exceptions.dart';
+import 'package:myapp/services/auth/auth_service.dart';
 import '../show_error_snackbar.dart';
 import '../show_success_snackbar.dart';
 
@@ -54,14 +55,11 @@ class _RegisterViewState extends State<RegisterView> {
               final email = _email.text;
               final password = _password.text;
               try {
-                final userCredentials =
-                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                  email: email,
-                  password: password,
-                );
+                final userCredentials = await AuthService.firebase()
+                    .createUser(email: email, password: password);
 
-                await userCredentials.user?.sendEmailVerification();
-                await FirebaseAuth.instance.signOut();
+                await AuthService.firebase().sendEmailVerification();
+                await AuthService.firebase().logOut();
 
                 if (!mounted) {
                   return;
@@ -70,25 +68,23 @@ class _RegisterViewState extends State<RegisterView> {
                 showSuccessSnackbar(
                     context, "Please check your email to verify your account");
                 Navigator.of(context).pushNamed(loginRoute);
-              } on FirebaseAuthException catch (e) {
-                if (e.code == 'weak-password') {
-                  showErrorSnackbar(
-                    context,
-                    "weak password, make it stronger 🤖",
-                  );
-                } else if (e.code == 'email-already-in-use') {
-                  showErrorSnackbar(
-                    context,
-                    "email already in use 🧐",
-                  );
-                } else {
-                  showErrorSnackbar(
-                    context,
-                    e.code.toString(),
-                  );
-                }
-              } catch (e) {
-                showErrorSnackbar(context, "Unexpected Error 😈");
+              } on WeakPasswordAuthException {
+                showErrorSnackbar(
+                  context,
+                  "weak password, make it stronger 🤖",
+                );
+              } on EmailAlreadyInUseAuthException {
+                showErrorSnackbar(
+                  context,
+                  "email already in use 🧐",
+                );
+              } on InvalidEmailAuthException {
+                showErrorSnackbar(
+                  context,
+                  "this is an invalid email address 🧐",
+                );
+              } on GenericAuthException {
+                showErrorSnackbar(context, "Failed to register 😈");
               }
             },
             child: const Text("Register"),

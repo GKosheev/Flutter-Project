@@ -1,6 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/constants/routes.dart';
+import 'package:myapp/services/auth/auth_exceptions.dart';
+import 'package:myapp/services/auth/auth_service.dart';
 import 'package:myapp/utils/show_success_snackbar.dart';
 import '../show_error_snackbar.dart';
 
@@ -21,15 +22,15 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
           IconButton(
               onPressed: (() async {
                 try {
-                  await FirebaseAuth.instance.signOut();
+                  await AuthService.firebase().logOut();
                   Navigator.of(context).pushNamedAndRemoveUntil(
                     loginRoute,
                     (_) => false,
                   );
-                } on FirebaseAuthException catch (e) {
-                  showErrorSnackbar(context, e.code.toString());
-                } catch (e) {
-                  showErrorSnackbar(context, "Unexpected Error 😈");
+                } on UserNotLoggedInAuthException {
+                  showErrorSnackbar(context, "You are not logged in");
+                } on GenericAuthException {
+                  showErrorSnackbar(context, "Logout error 😈");
                 }
               }),
               tooltip: "Logout",
@@ -54,9 +55,8 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
             TextButton(
                 onPressed: () async {
                   try {
-                    final user = FirebaseAuth.instance.currentUser;
-                    await user?.sendEmailVerification();
-                    await FirebaseAuth.instance.signOut();
+                    await AuthService.firebase().sendEmailVerification();
+                    await AuthService.firebase().logOut();
 
                     if (!mounted) {
                       return;
@@ -67,9 +67,9 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                       loginRoute,
                       (_) => false,
                     );
-                  } on FirebaseAuthException catch (e) {
-                    showErrorSnackbar(context, e.code.toString());
-                  } catch (e) {
+                  } on UserNotLoggedInAuthException {
+                    showErrorSnackbar(context, "You are not logged in");
+                  } on GenericAuthException {
                     showErrorSnackbar(context, "Unexpected Error 😈");
                   }
                 },

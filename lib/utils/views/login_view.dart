@@ -1,6 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/constants/routes.dart';
+import 'package:myapp/services/auth/auth_exceptions.dart';
+import 'package:myapp/services/auth/auth_service.dart';
 import 'package:myapp/utils/show_error_snackbar.dart';
 
 class LoginView extends StatefulWidget {
@@ -52,13 +53,9 @@ class _LoginViewState extends State<LoginView> {
               final email = _email.text;
               final password = _password.text;
               try {
-                final userCredentials =
-                    await FirebaseAuth.instance.signInWithEmailAndPassword(
-                  email: email,
-                  password: password,
-                );
-
-                if (userCredentials.user?.emailVerified == true && mounted) {
+                final userCredentials = await AuthService.firebase()
+                    .logIn(email: email, password: password);
+                if (userCredentials.isEmailVerified == true && mounted) {
                   Navigator.of(context).pushNamedAndRemoveUntil(
                     notesRoute,
                     (_) => false,
@@ -66,10 +63,12 @@ class _LoginViewState extends State<LoginView> {
                 } else {
                   Navigator.of(context).pushNamed(verifyEmailRoute);
                 }
-              } on FirebaseAuthException catch (e) {
-                showErrorSnackbar(context, e.code.toString());
-              } catch (e) {
-                showErrorSnackbar(context, "Unexpected Error 😈");
+              } on UserNotFoundAuthException {
+                showErrorSnackbar(context, "User not found");
+              } on WrongPasswordAuthException {
+                showErrorSnackbar(context, "Wrong credentials");
+              } on GenericAuthException {
+                showErrorSnackbar(context, "Authentication error 😈");
               }
             },
             child: const Text("Login"),
